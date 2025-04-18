@@ -43,7 +43,7 @@ export function App() {
           getLineColor={STROKE}
           filled
           stroked
-          beforeId="waterway_label"
+          // beforeId="waterway_label"
           // parameters={{ cullMode: "none" }}
         />
       </Deckgl>
