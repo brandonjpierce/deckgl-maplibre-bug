@@ -1,0 +1,28 @@
+{
+  "name": "deckgl-maplibre-bug",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "example1": "pnpm vite example1 -c ./example1/vite.config.js --open",
+    "example2": "pnpm vite example2 -c ./example2/vite.config.js --open",
+    "example3": "pnpm vite example3 -c ./example3/vite.config.js --open",
+    "example4": "pnpm vite example4 -c ./example4/vite.config.js --open"
+  },
+  "dependencies": {
+    "@deck.gl/core": "9.1.8",
+    "@deck.gl/extensions": "9.1.8",
+    "@deck.gl/geo-layers": "9.1.8",
+    "@deck.gl/layers": "9.1.8",
+    "@deck.gl/mapbox": "9.1.8",
+    "@deck.gl/mesh-layers": "9.1.8",
+    "@deck.gl/react": "9.1.8",
+    "@deckgl-fiber-renderer/dom": "1.3.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "maplibre-gl": "5.2.0",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "react-map-gl": "^8.0.4",
+    "vite": "^6.3.1"
+  },
+  "packageManager": "pnpm@10.5.2"
+}
