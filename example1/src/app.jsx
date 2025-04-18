@@ -17,9 +17,11 @@ export function App() {
         style: STYLE,
         center: [INITIAL_VIEW_STATE.longitude, INITIAL_VIEW_STATE.latitude],
         zoom: INITIAL_VIEW_STATE.zoom,
+        dragRotate: false,
+        maxPitch: 0,
       });
 
-      maplibre.on("load", () => {
+      maplibre.once("style.load", () => {
         maplibre.setProjection({ type: "globe" });
         maplibre.addControl(deckglInstance);
       });
@@ -41,7 +43,7 @@ export function App() {
           getLineColor={STROKE}
           filled
           stroked
-          // beforeId="waterway_label"
+          beforeId="waterway_label"
           // parameters={{ cullMode: "none" }}
         />
       </Deckgl>
