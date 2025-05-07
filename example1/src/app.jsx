@@ -2,10 +2,25 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import "../../shared/reset.css";
 import { useEffect } from "react";
 import { Deckgl, useDeckgl } from "@deckgl-fiber-renderer/dom";
+// import { COORDINATE_SYSTEM } from "@deck.gl/core";
+// import { SphereGeometry } from "@luma.gl/engine";
 import { Map as Maplibre } from "maplibre-gl";
 import { FILL, STROKE } from "../../shared/colors";
 import { DATA_URL } from "../../shared/data";
 import { INITIAL_VIEW_STATE, STYLE } from "../../shared/map";
+
+// const EARTH_RADIUS_METERS = 6378137.0;
+
+// const bgGeometry = new SphereGeometry({
+//   radius: EARTH_RADIUS_METERS,
+//   nlat: 360,
+//   nlong: 360,
+// });
+
+const parameters = {
+  // This does seem to work but results in geometry not being backface culled correctly
+  depthCompare: "always",
+};
 
 export function App() {
   const deckglInstance = useDeckgl();
@@ -35,16 +50,26 @@ export function App() {
   return (
     <>
       <div id="maplibre" />
-      <Deckgl interleaved>
+      <Deckgl parameters={parameters} interleaved>
+        {/* <simpleMeshLayer
+          id="background"
+          data={[0]}
+          mesh={bgGeometry}
+          coordinateSystem={COORDINATE_SYSTEM.CARTESIAN}
+          getPosition={[0, 0, 0]}
+          getColor={[255, 255, 255]}
+        /> */}
         <geoJsonLayer
           id="polygon"
           data={DATA_URL}
           getFillColor={FILL}
           getLineColor={STROKE}
-          filled
-          stroked
-          // beforeId="waterway_label"
-          // parameters={{ cullMode: "none" }}
+          filled={false}
+          stroked={true}
+          getLineWidth={2}
+          lineWidthUnits="pixels"
+          // getPolygonOffset={() => [0, -999]}
+          // parameters={{ cullMode: "back" }}
         />
         <textLayer
           id="text"
@@ -55,13 +80,11 @@ export function App() {
           getTextAnchor="middle"
           getAlignmentBaseline="center"
           getColor={FILL.slice(0, 3)}
-          billboard={false}
-          // beforeId="waterway_label"
+          // Setting billboard will invert text 180 deg
+          // billboard={false}
 
-          // For some reason text is rendered upside down by default?
-          // getAngle={-180}
-          // Commenting this out hides the text entirely?
-          parameters={{ cullMode: "none" }}
+          // cullMode of "back" makes text disappear
+          parameters={{ cullMode: "front" }}
         />
       </Deckgl>
     </>
