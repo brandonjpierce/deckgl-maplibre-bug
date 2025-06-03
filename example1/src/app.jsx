@@ -1,75 +1,41 @@
 import "maplibre-gl/dist/maplibre-gl.css";
 import "../../shared/reset.css";
-import { useEffect } from "react";
-import { Deckgl, useDeckgl } from "@deckgl-fiber-renderer/dom";
-// import { COORDINATE_SYSTEM } from "@deck.gl/core";
-// import { SphereGeometry } from "@luma.gl/engine";
-import { Map as Maplibre } from "maplibre-gl";
+import { Deckgl } from "@deckgl-fiber-renderer/dom";
+import { _GlobeView } from "@deck.gl/core";
 import { FILL, STROKE } from "../../shared/colors";
 import { DATA_URL } from "../../shared/data";
-import { INITIAL_VIEW_STATE, STYLE } from "../../shared/map";
-
-// const EARTH_RADIUS_METERS = 6378137.0;
-
-// const bgGeometry = new SphereGeometry({
-//   radius: EARTH_RADIUS_METERS,
-//   nlat: 360,
-//   nlong: 360,
-// });
+import { INITIAL_VIEW_STATE } from "../../shared/map";
 
 const parameters = {
-  // This does seem to work but results in geometry not being backface culled correctly
-  depthCompare: "always",
+  depthCompare: "less-equal",
+  // depthCompare: "always",
+  // cullMode: "back",
 };
 
+const view = new _GlobeView({
+  id: "main",
+  controller: true,
+  resolution: 1,
+});
+
 export function App() {
-  const deckglInstance = useDeckgl();
-
-  useEffect(() => {
-    if (deckglInstance) {
-      const maplibre = new Maplibre({
-        container: "maplibre",
-        style: STYLE,
-        center: [INITIAL_VIEW_STATE.longitude, INITIAL_VIEW_STATE.latitude],
-        zoom: INITIAL_VIEW_STATE.zoom,
-        dragRotate: false,
-        maxPitch: 0,
-      });
-
-      maplibre.once("style.load", () => {
-        maplibre.setProjection({ type: "globe" });
-        maplibre.addControl(deckglInstance);
-      });
-
-      return () => {
-        maplibre.remove();
-      };
-    }
-  }, [deckglInstance]);
-
   return (
     <>
-      <div id="maplibre" />
-      <Deckgl parameters={parameters} interleaved>
-        {/* <simpleMeshLayer
-          id="background"
-          data={[0]}
-          mesh={bgGeometry}
-          coordinateSystem={COORDINATE_SYSTEM.CARTESIAN}
-          getPosition={[0, 0, 0]}
-          getColor={[255, 255, 255]}
-        /> */}
+      <Deckgl
+        parameters={parameters}
+        initialViewState={INITIAL_VIEW_STATE}
+        views={view}
+        controller
+      >
         <geoJsonLayer
           id="polygon"
           data={DATA_URL}
           getFillColor={FILL}
           getLineColor={STROKE}
-          filled={false}
+          filled={true}
           stroked={true}
-          getLineWidth={2}
+          getLineWidth={3}
           lineWidthUnits="pixels"
-          // getPolygonOffset={() => [0, -999]}
-          // parameters={{ cullMode: "back" }}
         />
         <textLayer
           id="text"
@@ -81,10 +47,10 @@ export function App() {
           getAlignmentBaseline="center"
           getColor={FILL.slice(0, 3)}
           // Setting billboard will invert text 180 deg
-          // billboard={false}
+          billboard={false}
 
           // cullMode of "back" makes text disappear
-          parameters={{ cullMode: "front" }}
+          // parameters={{ cullMode: "front" }}
         />
       </Deckgl>
     </>

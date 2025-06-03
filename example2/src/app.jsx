@@ -2,10 +2,20 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import "../../shared/reset.css";
 import { MapboxOverlay } from "@deck.gl/mapbox";
 import { Map as Maplibre, useControl } from "react-map-gl/maplibre";
-import { GeoJsonLayer, TextLayer } from "@deck.gl/layers";
+import {
+  GeoJsonLayer,
+  IconLayer,
+  ScatterplotLayer,
+  TextLayer,
+} from "@deck.gl/layers";
 import { FILL, STROKE } from "../../shared/colors";
 import { DATA_URL } from "../../shared/data";
 import { INITIAL_VIEW_STATE, STYLE } from "../../shared/map";
+
+const PARAMETERS = {
+  // depthCompare: "always",
+  // cullMode: "back",
+};
 
 function DeckGLOverlay(props) {
   useControl(() => new MapboxOverlay(props));
@@ -21,8 +31,23 @@ export function App() {
       stroked: true,
       getFillColor: FILL,
       getLineColor: STROKE,
+      lineWidthUnits: "pixels",
+      getLineWidth: 2,
+    }),
+    new IconLayer({
+      id: "icon",
+      data: "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/bart-stations.json",
+      iconAtlas:
+        "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png",
+      iconMapping:
+        "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.json",
+      getPosition: (d) => d.coordinates,
+      getColor: [255, 140, 0],
+      getIcon: (d) => "marker",
+      getSize: 32,
+      billboard: false,
+      sizeUnits: "pixels",
       // parameters: { cullMode: "none" },
-      // beforeId: "waterway_label",
     }),
     new TextLayer({
       id: "text",
@@ -39,9 +64,11 @@ export function App() {
       // For some reason text is rendered upside down by default?
       // getAngle: -180,
       // Commenting this out hides the text entirely?
-      parameters: { cullMode: "none" },
+      // parameters: { cullMode: "none" },
     }),
   ];
+
+  console.log(layers);
 
   return (
     <Maplibre
@@ -52,7 +79,7 @@ export function App() {
       dragRotate={false}
       maxPitch={0}
     >
-      <DeckGLOverlay layers={layers} interleaved />
+      <DeckGLOverlay layers={layers} interleaved parameters={PARAMETERS} />
     </Maplibre>
   );
 }
